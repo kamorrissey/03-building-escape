@@ -1,0 +1,10 @@
+# Unreal Engine components to ignore
+*/Build
+*/Binaries
+*/DerivedDataCache
+*/Intermediate
+*/Saved
+BuildingEscape/Content/StarterContent/
+
+# Visual Studio components to ignore
+*.VC.db
