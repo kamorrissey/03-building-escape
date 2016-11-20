@@ -21,11 +21,13 @@ void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
+	Owner = GetOwner();
+	ActorThatOpens = GetWorld()->GetFirstPlayerController()->GetPawn();
+	CloseDoor();
 
-	AActor* owner = GetOwner();
-	FRotator newRotation(0.0f, 60.0f, 0.0f);
-	owner->SetActorRotation(newRotation);
+	FString objectName = Owner->GetName();
+	UE_LOG(LogTemp, Warning, TEXT("OpenDoor component of %s"), *objectName);
+
 }
 
 
@@ -34,6 +36,34 @@ void UOpenDoor::TickComponent( float DeltaTime, ELevelTick TickType, FActorCompo
 {
 	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
 
-	// ...
+	// Poll for PressurePlate overlap with ActorThatOpens
+	if (PressurePlate->IsOverlappingActor(ActorThatOpens))
+	{
+		// UE_LOG(LogTemp, Warning, TEXT("pressure plate opening door %s"), *ActorThatOpens->GetName());
+		OpenDoor();
+		DoorLastOpenTime = GetWorld()->GetTimeSeconds();
+	}
+
+	float now = GetWorld()->GetTimeSeconds();
+	if ((now - DoorLastOpenTime) >= DoorOpenDelay)
+	{
+		CloseDoor();
+	}
+}
+
+void UOpenDoor::OpenDoor()
+{
+	FRotator newRotation(0.0f, OpenAngle, 0.0f);
+	Owner->SetActorRotation(newRotation);
+
+	UE_LOG(LogTemp, Warning, TEXT("Open door %s"), *Owner->GetName());
+}
+
+void UOpenDoor::CloseDoor()
+{
+	FRotator newRotation(0.0f, CloseAngle, 0.0f);
+	Owner->SetActorRotation(newRotation);
+
+	UE_LOG(LogTemp, Warning, TEXT("Close door %s"), *Owner->GetName());
 }
 
