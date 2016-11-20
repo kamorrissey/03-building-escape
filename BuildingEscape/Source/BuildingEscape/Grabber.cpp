@@ -3,6 +3,8 @@
 #include "BuildingEscape.h"
 #include "Grabber.h"
 
+#define OUT
+
 
 // Sets default values for this component's properties
 UGrabber::UGrabber()
@@ -12,7 +14,7 @@ UGrabber::UGrabber()
 	bWantsBeginPlay = true;
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
+	UE_LOG(LogTemp, Warning, TEXT("Grabber reporting for duty!"));
 }
 
 
@@ -20,9 +22,6 @@ UGrabber::UGrabber()
 void UGrabber::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
-	
 }
 
 
@@ -31,6 +30,14 @@ void UGrabber::TickComponent( float DeltaTime, ELevelTick TickType, FActorCompon
 {
 	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
 
-	// ...
+	APlayerController *player = GetWorld()->GetFirstPlayerController();
+
+	FVector vector;
+	FRotator rotation;
+	player->GetPlayerViewPoint(OUT vector, OUT rotation);
+
+	UE_LOG(LogTemp, Warning, TEXT("Player x=%f,y=%f,z=%f p=%f,y=%f,r=%f\n"),
+		vector.X, vector.Y, vector.Z,
+		rotation.Pitch, rotation.Yaw, rotation.Roll);
 }
 
