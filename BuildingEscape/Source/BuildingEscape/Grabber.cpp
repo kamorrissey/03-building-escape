@@ -22,6 +22,8 @@ UGrabber::UGrabber()
 void UGrabber::BeginPlay()
 {
 	Super::BeginPlay();
+
+	Reach = 100.f;
 }
 
 
@@ -30,14 +32,15 @@ void UGrabber::TickComponent( float DeltaTime, ELevelTick TickType, FActorCompon
 {
 	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
 
-	APlayerController *player = GetWorld()->GetFirstPlayerController();
-
-	FVector vector;
+	FVector position;
 	FRotator rotation;
-	player->GetPlayerViewPoint(OUT vector, OUT rotation);
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT position, OUT rotation);
 
-	UE_LOG(LogTemp, Warning, TEXT("Player x=%f,y=%f,z=%f p=%f,y=%f,r=%f\n"),
-		vector.X, vector.Y, vector.Z,
-		rotation.Pitch, rotation.Yaw, rotation.Roll);
+	UE_LOG(LogTemp, Warning, TEXT("Location: %s Rotation: %s"),
+		*position.ToString(), *rotation.ToString());
+
+	FVector lineEnd = position + (rotation.Vector() * Reach);
+
+	DrawDebugLine(GetWorld(), position, lineEnd, FColor(255, 0, 0), false, 0.f, 0, 10.f);
 }
 
