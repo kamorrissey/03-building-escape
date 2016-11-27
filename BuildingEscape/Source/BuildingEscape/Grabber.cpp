@@ -22,8 +22,6 @@ UGrabber::UGrabber()
 void UGrabber::BeginPlay()
 {
 	Super::BeginPlay();
-
-	Reach = 100.f;
 }
 
 
@@ -42,5 +40,22 @@ void UGrabber::TickComponent( float DeltaTime, ELevelTick TickType, FActorCompon
 	FVector lineEnd = position + (rotation.Vector() * Reach);
 
 	DrawDebugLine(GetWorld(), position, lineEnd, FColor(255, 0, 0), false, 0.f, 0, 10.f);
+
+	FCollisionQueryParams collisionQueryParams(FName(TEXT("")), false, GetOwner());
+
+	FHitResult hit;
+	GetWorld()->LineTraceSingleByObjectType(
+		OUT hit,
+		position,
+		lineEnd,
+		FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody),
+		collisionQueryParams
+	);
+
+	AActor* hitActor = hit.GetActor();
+	if (hitActor)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Hit actor %s"), *hitActor->GetName());
+	}
 }
 
