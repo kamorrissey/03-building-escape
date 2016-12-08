@@ -56,7 +56,7 @@ void UOpenDoor::OpenDoor()
 	FRotator newRotation(0.0f, OpenAngle, 0.0f);
 	Owner->SetActorRotation(newRotation);
 
-	UE_LOG(LogTemp, Warning, TEXT("Open door %s"), *Owner->GetName());
+	// UE_LOG(LogTemp, Warning, TEXT("Open door %s"), *Owner->GetName());
 }
 
 void UOpenDoor::CloseDoor()
@@ -64,6 +64,6 @@ void UOpenDoor::CloseDoor()
 	FRotator newRotation(0.0f, CloseAngle, 0.0f);
 	Owner->SetActorRotation(newRotation);
 
-	UE_LOG(LogTemp, Warning, TEXT("Close door %s"), *Owner->GetName());
+	// UE_LOG(LogTemp, Warning, TEXT("Close door %s"), *Owner->GetName());
 }
 
