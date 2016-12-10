@@ -21,8 +21,6 @@ void UGrabber::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UE_LOG(LogTemp, Warning, TEXT("Grabber reporting for duty!"));
-
 	FindPhysicsHandle();
 	SetupInputComponent();
 }
@@ -43,28 +41,22 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	}
 }
 
-
-
+/// Find the PhysicsHandle component attached to the owning actor
 void UGrabber::FindPhysicsHandle()
 {
 	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
-	if (PhysicsHandle)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Physics handle found for actor %s"), *GetOwner()->GetName());
-	}
-	else
+	if (PhysicsHandle == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Physics handle NOT found for actor %s"), *GetOwner()->GetName());
 	}
 }
 
+/// Get the InputComponent attached to the owning actor and bind triggers to it
 void UGrabber::SetupInputComponent()
 {
 	InputComponent = GetOwner()->FindComponentByClass<UInputComponent>();
 	if (InputComponent)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Input component found for actor %s"), *GetOwner()->GetName());
-
 		InputComponent->BindAction("Grab", IE_Pressed, this, &UGrabber::Grab);
 		InputComponent->BindAction("Grab", IE_Released, this, &UGrabber::Release);
 	}
@@ -74,32 +66,28 @@ void UGrabber::SetupInputComponent()
 	}
 }
 
+/// Get the first PhysicsBody within reach based on ray tracing
 const FHitResult UGrabber::GetFirstPhysicsBodyInReach()
 {
-	FVector position;
+	FVector lineStart;
 	FVector lineEnd;
-	GetLineTrace(OUT position, OUT lineEnd);
+	GetLineTrace(OUT lineStart, OUT lineEnd);
 
 	FCollisionQueryParams collisionQueryParams(FName(TEXT("")), false, GetOwner());
 
 	FHitResult hit;
 	GetWorld()->LineTraceSingleByObjectType(
 		OUT hit,
-		position,
+		lineStart,
 		lineEnd,
 		FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody),
 		collisionQueryParams
 	);
 
-	AActor* hitActor = hit.GetActor();
-	if (hitActor)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Hit actor %s"), *hitActor->GetName());
-	}
-
 	return hit;
 }
 
+/// Get the start and end points of a line-trace within a reach distance
 void UGrabber::GetLineTrace(FVector& lineStart, FVector& lineEnd)
 {
 	FRotator rotation;
@@ -108,10 +96,9 @@ void UGrabber::GetLineTrace(FVector& lineStart, FVector& lineEnd)
 	lineEnd = lineStart + (rotation.Vector() * Reach);
 }
 
+/// Attach a PhysicsHandle to an actor in reach
 void UGrabber::Grab()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Grab pressed"));
-
 	/// Line trace and see if we reach any actors with physics body collision channel set
 	auto HitResult = GetFirstPhysicsBodyInReach();
 	auto ComponentToGrab = HitResult.GetComponent();
@@ -123,10 +110,9 @@ void UGrabber::Grab()
 	}
 }
 
+/// Detach a PhysicsHandle
 void UGrabber::Release()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Grab released"));
-
 	PhysicsHandle->ReleaseComponent();
 }
 
