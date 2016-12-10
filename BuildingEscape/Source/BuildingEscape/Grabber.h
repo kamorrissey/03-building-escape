@@ -42,4 +42,7 @@ private:
 
 	// return hit for first physics body in reach
 	const FHitResult GetFirstPhysicsBodyInReach();
+
+	// get the end of a line trace
+	void GetLineTrace(FVector& start, FVector& end);
 };
