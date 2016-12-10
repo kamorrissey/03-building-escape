@@ -25,6 +25,9 @@ private:
 	void OpenDoor();
 	void CloseDoor();
 
+	// Get mass in kg
+	float GetTotalMassOnPressurePlate();
+
 	UPROPERTY(VisibleAnywhere)
 		float OpenAngle = -160.0f;
 
@@ -39,8 +42,5 @@ private:
 
 	float DoorLastOpenTime;
 
-	AActor* ActorThatOpens;
-
 	AActor* Owner;
-
 };
